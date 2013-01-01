@@ -16,6 +16,24 @@ vector
 tables/ITable.h
 /home/ubuntu/2383/2016-Vision/tables/ITable.h
 
+/home/ubuntu/2383/2016-Vision/cvFreenect.cpp
+opencv2/core/core.hpp
+-
+opencv2/imgproc/imgproc.hpp
+-
+mutex
+-
+cmath
+-
+vector
+-
+iostream
+-
+libfreenect.hpp
+/home/ubuntu/2383/2016-Vision/libfreenect.hpp
+cvFreenect.hpp
+/home/ubuntu/2383/2016-Vision/cvFreenect.hpp
+
 /home/ubuntu/2383/2016-Vision/cvFreenect.hpp
 opencv2/core/core.hpp
 -

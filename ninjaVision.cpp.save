@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
   device.startVideo();
 
   NetworkTable::SetClientMode();
-  NetworkTable::SetIPAddress("10.23.83.2");
+  NetworkTable::SetIPAddress("roborio-2383-frc.lan");
 
   shared_ptr<NetworkTable> table = NetworkTable::GetTable("vision");
 
@@ -45,11 +45,10 @@ int main(int argc, char **argv) {
     vector<double> azimuths;
     //dont bother processing the mat if image is stale!
     if(!device.getVideo(videoMat)) continue;
- 
+
     Mat gray, ranged, processed;
     cvtColor(videoMat, gray, CV_BGR2GRAY);
-    //180-255 at SFL & ROC
-    inRange(gray, Scalar(120), Scalar(255), processed);
+    inRange(gray, Scalar(64), Scalar(255), processed);
 
     Mat tmp = processed.clone();
 
@@ -63,17 +62,18 @@ int main(int argc, char **argv) {
       double area = contourArea(contour);
       vector<Point> hull;
       convexHull(contour, hull);
-      double aspect = (double) r.width / (double) r.height;
-      double solidity = 100.0 * area / contourArea(hull);
+      double solidity = 100 * area / contourArea(hull);
 
-      if (aspect > 1.0 && r.width > 30 && solidity < 50.0) {
+      if (area > 400.0 && r.height > 25 && r.width > 25 && solidity < 75.0) {
         filteredContours.push_back(contour);
         ir_rects.push_back(r);
       }
     }
 
+    /*
     Mat drawing;
     cvtColor(processed, drawing, CV_GRAY2BGR);
+    */
 
     for (Rect r : ir_rects) {
         double x, targetX, distance, azimuth;
@@ -89,33 +89,29 @@ int main(int argc, char **argv) {
         distance = ((processed.size().width*(10.0/r.width)))/(tan(46.6 * M_PI/180.0)/2.0);
         targetX = r.tl().x + r.width / 2;
         targetX = 2 * (targetX / processed.size().width) - 1;
-        azimuth = targetX*58.5 / 2.0;
+        azimuth = normalize360(targetX*58.5 / 2.0);
 
         distances.push_back(distance);
         azimuths.push_back(azimuth);
 
+        /*
         rectangle(drawing, r.tl(), r.br(), Scalar(79,10,255), 2, 8, 0);
 
         Point center = Point(r.br().x - r.width / 2 - 15, r.br().y - r.height / 2);
         Point centert = Point(center.x, 10.0+center.y+r.height/2);
-        Point centerb = Point(center.x, 10.0+center.y-r.height/2);
-
+        Point centerb = Point(center.x, 10.0+center.y-r.height/2);jhjhkgg
         char capTop[100];
         char capBottom[100];
-        snprintf(capTop, sizeof(capTop), "asp: %f w: %d", (double) r.width/(double) r.height, r.width);
-        snprintf(capBottom, sizeof(capBottom), "h: %d, az: %f, dist: %f", r.height, azimuth, distance);
-        //snprintf(capTop, sizeof(capTop), "x: %f azimuth: %f", x, azimuth);
-        //snprintf(capBottom, sizeof(capBottom), "distance: %f", distance);
+        snprintf(capTop, sizeof(capTop), "x: %f azimuth: %f", x, azimuth);
+        snprintf(capBottom, sizeof(capBottom), "distance: %f", distance);
 
         putText(drawing, capTop, centert, FONT_HERSHEY_PLAIN, 1, Scalar(255,10,79));
         putText(drawing, capBottom, centerb, FONT_HERSHEY_PLAIN, 1, Scalar(255,10,79));
+        */
     }
 
     table->PutNumberArray("distances", distances);
     table->PutNumberArray("azimuths", azimuths);
-
-    //imwrite("snap.jpg", gray);
-    //imwrite("proc.jpg", drawing);
   }
   device.stopVideo();
   device.stopDepth();

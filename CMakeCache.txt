@@ -278,9 +278,6 @@ FREENECT_INCLUDE_DIR:PATH=/usr/local/include/libfreenect
 //Path to a library.
 FREENECT_freenect_LIBRARY:FILEPATH=/usr/local/lib/libfreenect.so
 
-//The directory containing a CMake configuration file for Freenect.
-Freenect_DIR:PATH=Freenect_DIR-NOTFOUND
-
 //Path to a file.
 LIBUSB_1_INCLUDE_DIR:PATH=/usr/include/libusb-1.0
 
