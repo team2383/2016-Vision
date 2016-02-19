@@ -3,6 +3,8 @@ build*/
 *.user*
 incoming/
 video/
+screenshot/
 matches/
 *~
 Thumbs.db
+*.swp
