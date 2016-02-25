@@ -8,14 +8,14 @@ using namespace std;
 
 class cvFreenectDevice : public Freenect::FreenectDevice {
   public:
-    cvFreenectDevice(freenect_context *_ctx, int _index)
+    cvFreenectDevice(freenect_context *_ctx, int _index);
 
     bool getVideo(Mat& output);
     bool getDepth(Mat& output);
 
     //Callbacks for FreenectDevice below
-    void VideoCallback(void* _rgb, uint32_t timestamp)
-    void DepthCallback(void* _depth, uint32_t timestamp)
+    void VideoCallback(void* _rgb, uint32_t timestamp);
+    void DepthCallback(void* _depth, uint32_t timestamp);
 
   private:
     vector<uint8_t> m_buffer_depth;
