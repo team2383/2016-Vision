@@ -1,5 +1,6 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include "cvFreenect.hpp"
 
 using namespace cv;
@@ -22,7 +23,7 @@ int main(int argc, char **argv) {
   while (true) {
     device.getDepth(depthMat);
     device.getDepth(rgbMat);
-    depthMap.convertTo(depthf, CV_8UC1, 255.0/2048.0);
+    depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
     outStream.write(depthf);
   }
 
