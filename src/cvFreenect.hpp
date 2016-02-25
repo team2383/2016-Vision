@@ -24,8 +24,8 @@ class cvFreenectDevice : public Freenect::FreenectDevice {
     Mat depthMat;
     Mat rgbMat;
     Mat ownMat;
-    Mutex m_rgb_mutex;
-    Mutex m_depth_mutex;
+    mutex m_rgb_mutex;
+    mutex m_depth_mutex;
     bool m_new_rgb_frame;
     bool m_new_depth_frame;
 };
