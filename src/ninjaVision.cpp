@@ -1,13 +1,11 @@
 #include <thread>
 #include <chrono>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <opencv2/core/core.hpp>
 #include <iostream>
 
+#include <socket.hpp>
+#include <opencv2/core/core.hpp>
+
 #include "cvFreenect.cpp"
-#include "mjpeg_server.hpp" //github.com/ethanrublee/streamer
 
 using namespace cv;
 using namespace std;
@@ -24,23 +22,18 @@ int main(int argc, char **argv) {
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
 
-  server_ptr s = init_streaming_server("0.0.0.0", "9090", doc_root, num_threads);
-  streamer_ptr stmr(new streamer);
-  register_streamer(s, stmr, "/stream_0");
-
   device.startVideo();
   device.startDepth();
 
   s->start();
 
+  VideoWriter outStream(outFile, CV_FOURCC('M','J','P','G'), 30, depthMat.size);
+
   while (true) {
-    bool hasMat = device.getDepth(depthMat);
-    if (hasMat) {
-      bool wait = false;
-      int quality = 75;
-      int n_viewers = stmr->post_image(depthMat, quality, wait);
-      this_thread::sleep_for(chrono::milliseconds(20));
-    }
+    device.getDepth(depthMat);
+    device.getDepth(rgbMat);
+    depthMap.convertTo(depthf, CV_8UC1, 255.0/2048.0);
+    outStream.write(depthf);
   }
 
   device.stopVideo();
