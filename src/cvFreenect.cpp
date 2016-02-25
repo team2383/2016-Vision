@@ -2,6 +2,8 @@
 #include <libfreenect.hpp>
 #include <mutex>
 
+#include "cvFreenect.hpp"
+
 using namespace std;
 using namespace cv;
 
