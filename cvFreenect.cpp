@@ -20,7 +20,7 @@ cvFreenectDevice::cvFreenectDevice(freenect_context *_ctx, int _index)
   }
 }
 
-bool cvFreenectDevice::getVideo(Mat& output) {
+cvFreenectDevice::getVideo(Mat& output) {
   lock_guard<mutex> lock(m_rgb_mutex);
   if(m_new_rgb_frame) {
     cv::cvtColor(rgbMat, output, CV_RGB2BGR);
@@ -31,7 +31,7 @@ bool cvFreenectDevice::getVideo(Mat& output) {
   }
 }
 
-bool cvFreenectDevice::getDepth(Mat& output) {
+cvFreenectDevice::getDepth(Mat& output) {
   lock_guard<mutex> lock(m_depth_mutex);
     if(m_new_depth_frame) {
       depthMat.copyTo(output);
@@ -43,14 +43,14 @@ bool cvFreenectDevice::getDepth(Mat& output) {
   }
 
 //Callbacks for FreenectDevice below
-void cvFreenectDevice::VideoCallback(void* _rgb, uint32_t timestamp) {
+cvFreenectDevice::VideoCallback(void* _rgb, uint32_t timestamp) {
   lock_guard<mutex> lock(m_rgb_mutex);
   uint8_t* rgb = static_cast<uint8_t*>(_rgb);
   rgbMat.data = rgb;
   m_new_rgb_frame = true;
 };
 
-void cvFreenectDevice::DepthCallback(void* _depth, uint32_t timestamp) {
+cvFreenectDevice::DepthCallback(void* _depth, uint32_t timestamp) {
   lock_guard<mutex> lock(m_depth_mutex);
   uint16_t* depth = static_cast<uint16_t*>(_depth);
   depthMat.data = (uchar*) depth;
