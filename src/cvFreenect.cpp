@@ -6,7 +6,7 @@
 
 using namespace cv;
 
-class cvFreenectDevice : public Freenect::FreenectDevice {
+class cvFreenectDevice {
   public:
     cvFreenectDevice(freenect_context *_ctx, int _index)
       : Freenect::FreenectDevice(_ctx, _index), m_buffer_depth(FREENECT_DEPTH_11BIT),
