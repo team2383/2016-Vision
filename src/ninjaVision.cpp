@@ -1,14 +1,9 @@
-#include <thread>
-#include <chrono>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include "cvFreenect.cpp"
 
 using namespace cv;
 using namespace std;
-
-const size_t num_threads = 4;
-const string doc_root = "./";
 
 int main(int argc, char **argv) {
   Mat depthMat(Size(640,480),CV_16UC1);
@@ -21,8 +16,6 @@ int main(int argc, char **argv) {
 
   device.startVideo();
   device.startDepth();
-
-  s->start();
 
   VideoWriter outStream(outFile, CV_FOURCC('M','J','P','G'), 30, depthMat.size);
 
