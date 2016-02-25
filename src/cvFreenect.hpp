@@ -3,6 +3,9 @@
 #include "libfreenect.hpp"
 #include <mutex>
 
+#ifndef INCLUDE_CVFREENECT_H
+#define INCLUDE_CVFREENECT_H
+
 using namespace cv;
 using namespace std;
 
@@ -29,3 +32,5 @@ class cvFreenectDevice : public Freenect::FreenectDevice {
     bool m_new_rgb_frame;
     bool m_new_depth_frame;
 };
+
+#endif

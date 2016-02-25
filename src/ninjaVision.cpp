@@ -1,13 +1,13 @@
-#include <iostream>
 #include <thread>
 #include <chrono>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <opencv2/core/core.hpp>
+#include <iostream>
 
 #include "cvFreenect.cpp"
-#include "../streamer/mjpeg_server.hpp" //github.com/ethanrublee/streamer
+#include "mjpeg_server.hpp" //github.com/ethanrublee/streamer
 
 using namespace cv;
 using namespace std;

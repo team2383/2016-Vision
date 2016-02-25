@@ -1,7 +1,7 @@
 #include <opencv2/core/core.hpp>
-#include <libfreenect.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <mutex>
-
+#include "libfreenect.hpp"
 #include "cvFreenect.hpp"
 
 using namespace cv;
