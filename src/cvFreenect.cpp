@@ -55,3 +55,4 @@ void cvFreenectDevice::DepthCallback(void* _depth, uint32_t timestamp) {
   uint16_t* depth = static_cast<uint16_t*>(_depth);
   depthMat.data = (uchar*) depth;
   m_new_depth_frame = true;
+}

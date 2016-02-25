@@ -1,6 +1,6 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
-#include "cvFreenect.cpp"
+#include "cvFreenect.hpp"
 
 using namespace cv;
 using namespace std;
