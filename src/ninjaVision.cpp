@@ -2,7 +2,6 @@
 #include <chrono>
 #include <iostream>
 
-#include <socket.hpp>
 #include <opencv2/core/core.hpp>
 
 #include "cvFreenect.cpp"
