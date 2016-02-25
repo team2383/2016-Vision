@@ -13,7 +13,7 @@ using namespace cv;
 using namespace std;
 
 const size_t num_threads = 4;
-const size_t doc_root = "./";
+const string doc_root = "./";
 
 int main(int argc, char **argv) {
   Mat depthMat(Size(640,480),CV_16UC1);
