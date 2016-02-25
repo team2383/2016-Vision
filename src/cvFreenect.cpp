@@ -4,7 +4,6 @@
 
 #include "cvFreenect.hpp"
 
-using namespace std;
 using namespace cv;
 
 class cvFreenectDevice : public Freenect::FreenectDevice {

@@ -3,6 +3,9 @@
 #include "libfreenect.hpp"
 #include <mutex>
 
+using namespace cv;
+using namespace std;
+
 class cvFreenectDevice : public Freenect::FreenectDevice {
   public:
     cvFreenectDevice(freenect_context *_ctx, int _index)
@@ -15,9 +18,9 @@ class cvFreenectDevice : public Freenect::FreenectDevice {
     void DepthCallback(void* _depth, uint32_t timestamp)
 
   private:
-    std::vector<uint8_t> m_buffer_depth;
-    std::vector<uint8_t> m_buffer_rgb;
-    std::vector<uint16_t> m_gamma;
+    vector<uint8_t> m_buffer_depth;
+    vector<uint8_t> m_buffer_rgb;
+    vector<uint16_t> m_gamma;
     Mat depthMat;
     Mat rgbMat;
     Mat ownMat;
