@@ -1,6 +1,7 @@
 #include <opencv2/core/core.hpp>
-#include <libfreenect.hpp>
-#include "mutex.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <libfreenect>
+#include <mutex>
 
 class cvFreenectDevice : public Freenect::FreenectDevice {
   public:

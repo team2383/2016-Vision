@@ -3,6 +3,7 @@
 #include <mutex>
 
 using namespace std;
+using namespace cv;
 
 class cvFreenectDevice : public Freenect::FreenectDevice {
   public:
@@ -55,16 +56,4 @@ class cvFreenectDevice : public Freenect::FreenectDevice {
       depthMat.data = (uchar*) depth;
       m_new_depth_frame = true;
     }
-
-  private:
-    vector<uint8_t> m_buffer_depth;
-    vector<uint8_t> m_buffer_rgb;
-    vector<uint16_t> m_gamma;
-    Mat depthMat;
-    Mat rgbMat;
-    Mat ownMat;
-    mutex m_rgb_mutex;
-    mutex m_depth_mutex;
-    bool m_new_rgb_frame;
-    bool m_new_depth_frame;
 };

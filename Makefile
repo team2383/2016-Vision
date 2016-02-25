@@ -7,4 +7,4 @@ LIBS = `pkg-config --libs opencv libfreenect`
 MACHINE := $(shell uname -m)
 
 % : %.cpp
-	g++ $(CFLAGS) $(USERCFLAGS) $< -o $@ $(LIBS)
+	g++ $(CFLAGS) $(USERCFLAGS) -std=c++11 -lboost_asio $< -o $@ $(LIBS)
