@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   device.startVideo();
   device.startDepth();
 
-  VideoWriter outStream(outFile, CV_FOURCC('M','J','P','G'), 30, depthMat.size);
+  VideoWriter outStream("./out.mjpg", CV_FOURCC('M','J','P','G'), 30, depthMat.size);
 
   while (true) {
     device.getDepth(depthMat);
