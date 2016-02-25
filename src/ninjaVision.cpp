@@ -1,9 +1,7 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
-
 #include <opencv2/core/core.hpp>
-
 #include "cvFreenect.cpp"
 
 using namespace cv;
@@ -38,9 +36,4 @@ int main(int argc, char **argv) {
   device.stopVideo();
   device.stopDepth();
   return 0;
-}
-
-static void mjpeg_server () {
-
-
 }
