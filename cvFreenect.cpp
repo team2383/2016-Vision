@@ -1,6 +1,9 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <mutex>
+#include <cmath>
+#include <vector>
+#include <iostream>
 #include "libfreenect.hpp"
 #include "cvFreenect.hpp"
 
