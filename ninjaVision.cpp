@@ -20,17 +20,48 @@ int main(int argc, char **argv) {
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
 
-	namedWindow("rgb",CV_WINDOW_AUTOSIZE);
-	namedWindow("depth",CV_WINDOW_AUTOSIZE);
+	namedWindow("drawing",CV_WINDOW_AUTOSIZE);
 	device.startVideo();
 	device.startDepth();
 	while (!die) {
-		device.getVideo(rgbMat);
 		device.getDepth(depthMat);
-		cv::imshow("rgb", rgbMat);
-		depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
-		cv::imshow("depth",depthf);
-		char k = cvWaitKey(5);
+    Mat original = video.clone();
+    Mat tmp;
+    cvtColor(video, tmp, CV_RGB2HLS);
+    inRange(tmp, hsl_low, hsl_high, tmp);
+
+    Mat temp_contours = tmp.clone();
+    
+    vector<vector<Point> > contours;
+    vector<vector<Point> > filteredContours;
+
+    findContours(temp_contours, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+
+    int i;
+    for (i = 0; i < contours.size(); i++) {
+        vector<Point> contour = contours[i];
+        Rect r = boundingRect(contour);
+       
+        double area = contourArea(contour);
+        vector<Point> hull;
+        convexHull(contour, hull);
+        double solidity = 100 * area / contourArea(hull);
+        
+        if (area > 300.0 && solidity < 75.0) {
+            filteredContours.push_back(contour);
+            ir_rects.push_back(r);
+        }
+    }   
+
+    Mat drawing = Mat::zeros( original.size(), CV_8UC3 );
+    for( int i = 0; i< filteredContours.size(); i++ )
+    {
+      Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+      drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
+    }
+
+		imshow("drawing",drawing);
+		cvWaitKey(5);
 	}
   device.stopVideo();
   device.stopDepth();
