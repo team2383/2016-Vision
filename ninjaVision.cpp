@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
     vector<vector<Point> > contours;
     vector<vector<Point> > filteredContours;
     vector<Vec4i> hierarchy;
+    vector<Rect> ir_rects;
 
     findContours(temp_contours, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
@@ -56,7 +57,7 @@ int main(int argc, char **argv) {
     Mat drawing = Mat::zeros( original.size(), CV_8UC3 );
     for( int i = 0; i< filteredContours.size(); i++ )
     {
-      Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+      Scalar color = Scalar(128,128,128);
       drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
     }
 
