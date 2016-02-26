@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     device.getDepth(depthMat);
     Mat original = depthMat.clone();
     Mat tmp;
-    cvtColor(depthMat, tmp, CV_RGB2HLS);
+    cvtColor(depthMat, tmp, CV_BGR2HLS);
     inRange(tmp, Scalar(0,16,0), Scalar(255,255,255), tmp);
 
     Mat temp_contours = tmp.clone();
