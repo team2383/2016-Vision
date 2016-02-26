@@ -1,7 +1,7 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include "MyFreenect.cpp"
+#include "cvFreenect.hpp"
 #include "libfreenect.hpp"
 
 using namespace cv;
@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   Mat ownMat(Size(640,480),CV_8UC3,Scalar(0));
 
   Freenect::Freenect freenect;
-  MyFreenectDevice& device = freenect.createDevice<MyFreenectDevice>(0);
+  cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
 
 	namedWindow("rgb",CV_WINDOW_AUTOSIZE);
 	namedWindow("depth",CV_WINDOW_AUTOSIZE);
@@ -31,19 +31,6 @@ int main(int argc, char **argv) {
 		depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
 		cv::imshow("depth",depthf);
 		char k = cvWaitKey(5);
-		if( k == 27 ){
-			cvDestroyWindow("rgb");
-			cvDestroyWindow("depth");
-			break;
-		}
-		if( k == 8 ) {
-			std::ostringstream file;
-			file << filename << i_snap << suffix;
-			cv::imwrite(file.str(),rgbMat);
-			i_snap++;
-		}
-		if(iter >= 1000) break;
-		iter++;
 	}
   device.stopVideo();
   device.stopDepth();
