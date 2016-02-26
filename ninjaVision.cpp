@@ -18,13 +18,15 @@ int main(int argc, char **argv) {
   device.startVideo();
   device.startDepth();
 
-  VideoWriter outStream("./out.mov", CV_FOURCC('X','2','6','4'), 30, depthMat.size());
+  vector<int> params;
+  params.push_back(CV_IMWRITE_JPEG_QUALITY);
+  params.push_back(30);
 
   while (true) {
     device.getDepth(depthMat);
     device.getDepth(rgbMat);
     depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
-    outStream.write(rgbMat);
+    imwrite("mjpg", rgbMat, params);
   }
 
   device.stopVideo();
