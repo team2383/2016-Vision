@@ -1,7 +1,7 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include "cvFreenect.hpp"
+#include "MyFreenect.cpp"
 
 using namespace cv;
 using namespace std;
@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
   Mat ownMat(Size(640,480),CV_8UC3,Scalar(0));
 
   Freenect::Freenect freenect;
-  cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
+  MyFreenectDevice& device = freenect.createDevice<MyFreenectDevice>(0);
 
   device.startVideo();
   device.startDepth();
