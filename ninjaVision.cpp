@@ -3,6 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "cvFreenect.hpp"
 #include "libfreenect.hpp"
+#include "MJPGWriter.cpp"
 
 using namespace cv;
 using namespace std;
@@ -20,18 +21,20 @@ int main(int argc, char **argv) {
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
 
-	namedWindow("drawing",CV_WINDOW_AUTOSIZE);
-	device.startVideo();
-	device.startDepth();
-	while (!die) {
-		device.getDepth(depthMat);
-    Mat original = video.clone();
+  MJPGWriter camServer(8080);
+
+  device.startVideo();
+  device.startDepth();
+
+  while (!die) {
+    device.getDepth(depthMat);
+    Mat original = depthMat.clone();
     Mat tmp;
-    cvtColor(video, tmp, CV_RGB2HLS);
+    cvtColor(depthMat, tmp, CV_RGB2HLS);
     inRange(tmp, hsl_low, hsl_high, tmp);
 
     Mat temp_contours = tmp.clone();
-    
+
     vector<vector<Point> > contours;
     vector<vector<Point> > filteredContours;
 
@@ -39,19 +42,19 @@ int main(int argc, char **argv) {
 
     int i;
     for (i = 0; i < contours.size(); i++) {
-        vector<Point> contour = contours[i];
-        Rect r = boundingRect(contour);
-       
-        double area = contourArea(contour);
-        vector<Point> hull;
-        convexHull(contour, hull);
-        double solidity = 100 * area / contourArea(hull);
-        
-        if (area > 300.0 && solidity < 75.0) {
-            filteredContours.push_back(contour);
-            ir_rects.push_back(r);
-        }
-    }   
+      vector<Point> contour = contours[i];
+      Rect r = boundingRect(contour);
+
+      double area = contourArea(contour);
+      vector<Point> hull;
+      convexHull(contour, hull);
+      double solidity = 100 * area / contourArea(hull);
+
+      if (area > 300.0 && solidity < 75.0) {
+        filteredContours.push_back(contour);
+        ir_rects.push_back(r);
+      }
+    }
 
     Mat drawing = Mat::zeros( original.size(), CV_8UC3 );
     for( int i = 0; i< filteredContours.size(); i++ )
@@ -60,9 +63,10 @@ int main(int argc, char **argv) {
       drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
     }
 
-		imshow("drawing",drawing);
-		cvWaitKey(5);
-	}
+    camServer.write(drawing);
+
+    cvWaitKey(5);
+  }
   device.stopVideo();
   device.stopDepth();
   return 0;
