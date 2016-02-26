@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
     device.getDepth(rgbMat);
     depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
     outStream.write(rgbMat);
+    outStream.write(depthf);
   }
 
   device.stopVideo();
