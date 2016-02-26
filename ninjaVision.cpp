@@ -9,23 +9,23 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, char **argv) {
-  Mat depthMat(Size(640,480),CV_16UC1);
-  Mat depthf (Size(640,480),CV_8UC1);
   Mat rgbMat(Size(640,480),CV_8UC3,Scalar(0));
-  Mat ownMat(Size(640,480),CV_8UC3,Scalar(0));
 
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
 
   MJPGWriter camServer(8080);
 
-  device.startVideo();
-  device.startDepth();
-
   while (true) {
-    bool good = device.getDepth(depthMat);
+    vector<vector<Point> > contours;
+    vector<vector<Point> > filteredContours;
+    vector<Vec4i> hierarchy;
+    vector<Rect> ir_rects;
+    bool good = device.getVideo(videoMat);
     if (!good) continue;
+
     depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
+
     Mat original = depthf.clone();
     Mat tmp;
 
@@ -34,10 +34,7 @@ int main(int argc, char **argv) {
 
     Mat temp_contours = tmp.clone();
 
-    vector<vector<Point> > contours;
-    vector<vector<Point> > filteredContours;
-    vector<Vec4i> hierarchy;
-    vector<Rect> ir_rects;
+
 
     findContours(temp_contours, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
