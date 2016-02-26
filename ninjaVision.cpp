@@ -9,7 +9,7 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, char **argv) {
-  Mat videoMat(Size(480, 640),CV_8UC1,Scalar(0));
+  Mat videoMat(Size(640,480),CV_8UC1,Scalar(0));
 
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     Mat original = videoMat.clone();
     Mat tmp;
 
-    cvtColor(videoMat, tmp, CV_BGR2HLS);
+    //cvtColor(videoMat, tmp, CV_BGR2HLS);
     inRange(tmp, Scalar(0,16,0), Scalar(255,255,255), tmp);
 
     Mat temp_contours = tmp.clone();
