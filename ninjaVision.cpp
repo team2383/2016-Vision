@@ -18,6 +18,8 @@ int main(int argc, char **argv) {
   device.startVideo();
   device.startDepth();
 
+  namedWindow("rgb",CV_WINDOW_AUTOSIZE);
+  namedWindow("depth",CV_WINDOW_AUTOSIZE);
   VideoWriter outStream("./out.mjpg", CV_FOURCC('M','J','P','G'), 30, depthMat.size());
 
   while (true) {
