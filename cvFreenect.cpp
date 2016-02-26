@@ -21,11 +21,6 @@ cvFreenectDevice::cvFreenectDevice(freenect_context *_ctx, int _index)
     v = pow(v, 3)* 6;
     m_gamma[i] = v*6*256;
   }
-  setVideoFormat(FREENECT_VIDEO_IR_8BIT,   FREENECT_RESOLUTION_MEDIUM);
-  setDepthFormat(FREENECT_DEPTH_11BIT, FREENECT_RESOLUTION_MEDIUM);
-
-  startVideo();
-  startDepth();
 }
 
 bool cvFreenectDevice::getVideo(Mat& output) {

@@ -14,6 +14,12 @@ int main(int argc, char **argv) {
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
 
+  device.  setVideoFormat(FREENECT_VIDEO_IR_8BIT,   FREENECT_RESOLUTION_MEDIUM);
+  device.setDepthFormat(FREENECT_DEPTH_11BIT, FREENECT_RESOLUTION_MEDIUM);
+
+  device.startVideo();
+  device.startDepth();
+
   MJPGWriter camServer(8080);
 
   while (true) {
