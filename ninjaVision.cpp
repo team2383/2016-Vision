@@ -8,6 +8,10 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, char **argv) {
+  bool die(false);
+  string filename("snapshot");
+  string suffix(".png");
+  int i_snap(0),iter(0);
   Mat depthMat(Size(640,480),CV_16UC1);
   Mat depthf (Size(640,480),CV_8UC1);
   Mat rgbMat(Size(640,480),CV_8UC3,Scalar(0));
