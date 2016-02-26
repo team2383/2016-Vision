@@ -23,7 +23,8 @@ int main(int argc, char **argv) {
   device.startDepth();
 
   while (true) {
-    device.getDepth(depthMat);
+    bool good = device.getDepth(depthMat);
+    if (!good) continue;
     depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
     Mat original = depthf.clone();
     Mat tmp;
