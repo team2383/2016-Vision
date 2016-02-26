@@ -27,8 +27,7 @@ int main(int argc, char **argv) {
     vector<vector<Point> > filteredContours;
     vector<Vec4i> hierarchy;
     vector<Rect> ir_rects;
-    bool good = device.getVideo(videoMat);
-    if (!good) continue;
+    device.getVideo(videoMat);
 
     Mat original = videoMat.clone();
     Mat tmp;
