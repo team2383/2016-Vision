@@ -1,10 +1,15 @@
-# Source: http://stackoverflow.com/questions/9870297/makefile-to-compile-opencv-code-in-c-on-ubuntu-linux
-# usage: make filename
+all: test
 
-CFLAGS = `pkg-config --cflags opencv libfreenect`
-LIBS = `pkg-config --libs opencv libfreenect`
+CFLAGS=-fPIC -g -Wall `pkg-config --cflags opencv`
+LIBS = `pkg-config --libs opencv`
+INCLUDE = -I/usr/local/include/libfreenect
+FREE_LIBS = -L/usr/local/lib -lfreenect
 
-MACHINE := $(shell uname -m)
+test:  test.cpp
+	$(CXX) $(INCLUDE) $(CFLAGS) $? -o $@  $(LIBS) $(FREE_LIBS)
 
-% : %.cpp
-	g++ $(CFLAGS) $(USERCFLAGS) -std=c++11 $< -o $@ $(LIBS)
+%.o: %.cpp
+	$(CXX) -c $(CFLAGS) $< -o $@
+
+clean:
+	rm -rf *.o test
