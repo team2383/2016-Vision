@@ -135,7 +135,7 @@ public:
         #endif                   
             if ( s == sock ) // request on master socket, accept and send main header.
             {
-                socketlen_t addrlen = sizeof(SOCKADDR);
+                socklen_t addrlen = sizeof(SOCKADDR);
                 SOCKADDR_IN address = {0};     
                 SOCKET      client  = ::accept( sock,  (SOCKADDR*)&address, &addrlen );
                 if ( client == SOCKET_ERROR )
