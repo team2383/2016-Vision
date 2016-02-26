@@ -15,7 +15,7 @@ cvFreenectDevice::cvFreenectDevice(freenect_context *_ctx, int _index)
   m_buffer_video(FREENECT_VIDEO_IR_8BIT), m_gamma(2048), m_new_video_frame(false),
   m_new_depth_frame(false), depthMat(Size(640,480),CV_16UC1),
   videoMat(Size(640,480), CV_8UC1, Scalar(0)),
-  ownMat(Size(640,480),CV_8UC3,Scalar(0)) {
+  ownMat(Size(640,480),CV_8UC1,Scalar(0)) {
   for( unsigned int i = 0 ; i < 2048 ; i++) {
     float v = i/2048.0;
     v = pow(v, 3)* 6;
