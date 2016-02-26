@@ -16,20 +16,31 @@ int main(int argc, char **argv) {
   Freenect::Freenect freenect;
   MyFreenectDevice& device = freenect.createDevice<MyFreenectDevice>(0);
 
-  device.startVideo();
-  device.startDepth();
-
-  namedWindow("rgb",CV_WINDOW_AUTOSIZE);
-  namedWindow("depth",CV_WINDOW_AUTOSIZE);
-
-  while (true) {
-    device.getVideo(rgbMat);
-    device.getDepth(depthMat);
-    depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
-    imshow("rgb", rgbMat);
-    imshow("depth", depthf);
-  }
-
+	namedWindow("rgb",CV_WINDOW_AUTOSIZE);
+	namedWindow("depth",CV_WINDOW_AUTOSIZE);
+	device.startVideo();
+	device.startDepth();
+	while (!die) {
+		device.getVideo(rgbMat);
+		device.getDepth(depthMat);
+		cv::imshow("rgb", rgbMat);
+		depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
+		cv::imshow("depth",depthf);
+		char k = cvWaitKey(5);
+		if( k == 27 ){
+			cvDestroyWindow("rgb");
+			cvDestroyWindow("depth");
+			break;
+		}
+		if( k == 8 ) {
+			std::ostringstream file;
+			file << filename << i_snap << suffix;
+			cv::imwrite(file.str(),rgbMat);
+			i_snap++;
+		}
+		if(iter >= 1000) break;
+		iter++;
+	}
   device.stopVideo();
   device.stopDepth();
   return 0;
