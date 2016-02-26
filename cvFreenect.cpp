@@ -12,7 +12,7 @@ using namespace std;
 
 cvFreenectDevice::cvFreenectDevice(freenect_context *_ctx, int _index)
   : Freenect::FreenectDevice(_ctx, _index), m_buffer_depth(FREENECT_DEPTH_11BIT),
-  m_buffer_rgb(FREENECT_VIDEO_RGB), m_gamma(2048), m_new_rgb_frame(false),
+  m_buffer_rgb(FREENECT_VIDEO_IR_8BIT), m_gamma(2048), m_new_rgb_frame(false),
   m_new_depth_frame(false), depthMat(Size(640,480),CV_16UC1),
   rgbMat(Size(640,480), CV_8UC3, Scalar(0)),
   ownMat(Size(640,480),CV_8UC3,Scalar(0)) {
