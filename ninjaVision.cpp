@@ -9,10 +9,6 @@ using namespace cv;
 using namespace std;
 
 int main(int argc, char **argv) {
-  bool die(false);
-  string filename("snapshot");
-  string suffix(".png");
-  int i_snap(0),iter(0);
   Mat depthMat(Size(640,480),CV_16UC1);
   Mat depthf (Size(640,480),CV_8UC1);
   Mat rgbMat(Size(640,480),CV_8UC3,Scalar(0));
@@ -26,17 +22,18 @@ int main(int argc, char **argv) {
   device.startVideo();
   device.startDepth();
 
-  while (!die) {
+  while (true) {
     device.getDepth(depthMat);
     Mat original = depthMat.clone();
     Mat tmp;
     cvtColor(depthMat, tmp, CV_RGB2HLS);
-    inRange(tmp, hsl_low, hsl_high, tmp);
+    inRange(tmp, Scalar(0,16,0), Scalar(255,255,255), tmp);
 
     Mat temp_contours = tmp.clone();
 
     vector<vector<Point> > contours;
     vector<vector<Point> > filteredContours;
+    vector<Vec4i> hierarchy;
 
     findContours(temp_contours, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
