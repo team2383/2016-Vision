@@ -6,6 +6,10 @@
 #include <cv.h>
 #include <cxcore.h>
 #include <highgui.h>
+
+using namespace std;
+using namespace cv;
+
 class myMutex {
 	public:
 		myMutex() {
