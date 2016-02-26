@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     device.getDepth(depthMat);
     device.getDepth(rgbMat);
     depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
-    imwrite("mjpg", rgbMat, params);
+    imwrite("out.jpg", rgbMat, params);
   }
 
   device.stopVideo();
