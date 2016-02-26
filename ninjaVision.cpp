@@ -21,11 +21,10 @@ int main(int argc, char **argv) {
 
   namedWindow("rgb",CV_WINDOW_AUTOSIZE);
   namedWindow("depth",CV_WINDOW_AUTOSIZE);
-  VideoWriter outStream("./out.mjpg", CV_FOURCC('M','J','P','G'), 30, depthMat.size());
 
   while (true) {
+    device.getVideo(rgbMat);
     device.getDepth(depthMat);
-    device.getDepth(rgbMat);
     depthMat.convertTo(depthf, CV_8UC1, 255.0/2048.0);
     imshow("rgb", rgbMat);
     imshow("depth", depthf);
