@@ -6,112 +6,102 @@
 //
 // socket related abstractions:
 //
-#ifdef _WIN32  
-    #include <winsock.h>
-    #include <windows.h>
-    #include <time.h>
-    #define PORT        unsigned long
-    #define ADDRPOINTER   int*
-    struct _INIT_W32DATA
-    {
-       WSADATA w;
-       _INIT_W32DATA() { WSAStartup( MAKEWORD( 2, 1 ), &w ); }
-    } _init_once;
-#else       /* ! win32 */
-    #include <unistd.h>
-    #include <sys/time.h>
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netdb.h>
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-    #define PORT        unsigned short
-    #define SOCKET    int
-    #define HOSTENT  struct hostent
-    #define SOCKADDR    struct sockaddr
-    #define SOCKADDR_IN  struct sockaddr_in
-    #define ADDRPOINTER  unsigned int*
-    #define INVALID_SOCKET -1
-    #define SOCKET_ERROR   -1
-#endif /* _WIN32 */
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
 
+#include <unistd.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <pthread.h>
+
+#include <evhttp.h>
+#include <event2/event.h>
+
+#include <opencv2/core/core.hpp>
 #include <iostream>
 using std::cerr;
 using std::endl;
 
-#include "opencv2/opencv.hpp"
 using namespace cv;
 
 class MJPGWriter
 {
-    SOCKET sock;
+    int sock;
+    int maxfd;
     fd_set master;
     int timeout; // master sock timeout, shutdown after timeout millis.
     int quality; // jpeg compression [1..100]
 
-    int _write( int sock, char *s, int len ) 
-    { 
+    int _write( int sock, char *s, int len )
+    {
         if ( len < 1 ) { len = strlen(s); }
         return ::send( sock, s, len, 0 );
     }
 
 public:
 
-    MJPGWriter(int port = 0) 
-        : sock(INVALID_SOCKET) 
+    MJPGWriter(int port = 0)
+        : sock(-1)
         , timeout(200000)
         , quality(30)
+        , maxfd(-1)
     {
         FD_ZERO( &master );
             if (port)
                 open(port);
     }
 
-    ~MJPGWriter() 
+    ~MJPGWriter()
     {
         release();
     }
 
     bool release()
     {
-        if ( sock != INVALID_SOCKET )
+        if ( sock != -1 )
             ::shutdown( sock, 2 );
-        sock = (INVALID_SOCKET);
+        sock = (-1);
         return false;
     }
 
     bool open( int port )
     {
-        sock = ::socket (AF_INET, SOCK_STREAM, IPPROTO_TCP) ;
+        sock = ::socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        int yes=1;        // for setsockopt() SO_REUSEADDR, below
 
-        SOCKADDR_IN address;       
+        struct sockaddr_in address;
         address.sin_addr.s_addr = INADDR_ANY;
         address.sin_family      = AF_INET;
         address.sin_port        = ::htons(port);
-        if ( ::bind( sock, (SOCKADDR*) &address, sizeof(SOCKADDR_IN) ) == SOCKET_ERROR )
+        setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+        if ( ::bind( sock, (struct sockaddr *) &address, sizeof(struct sockaddr_in *) ) == -1 )
         {
             cerr << "error : couldn't bind sock "<<sock<<" to port "<<port<<"!" << endl;
             return release();
         }
-        if ( ::listen( sock, 10 ) == SOCKET_ERROR )
+        if ( ::listen( sock, 10 ) == -1 )
         {
             cerr << "error : couldn't listen on sock "<<sock<<" on port "<<port<<" !" << endl;
             return release();
         }
-        FD_SET( sock, &master );    
+        FD_SET( sock, &master );
+        maxfd = sock+1;
+        ::freeaddrinfo(address);
         return true;
     }
 
-    bool isOpened() 
+    bool isOpened()
     {
-        return sock != INVALID_SOCKET; 
+      return sock != -1;
     }
 
-    bool write(const Mat & frame)
+    bool write(const Mat &frame)
     {
         fd_set rread = master;
         struct timeval to = {0,timeout};
-        SOCKET maxfd = sock+1;
 
         if ( ::select( maxfd, &rread, NULL, NULL, &to ) <= 0 )
             return true; // nothing broken, there's just noone listening
@@ -123,27 +113,21 @@ public:
         cv::imencode(".jpg", frame, outbuf, params);
         int outlen = outbuf.size();
 
-        #ifdef _WIN32 
-        for ( unsigned i=0; i<rread.fd_count; i++ )
-        {
-            SOCKET s = rread.fd_array[i];    // fd_set on win is an array, while ...
-        #else         
         for ( int s=0; s<maxfd; s++ )
         {
-            if ( ! FD_ISSET(s,&rread) )      // ... on linux it's a bitmask ;)
+            if ( !FD_ISSET(s,&rread) )      // ... on linux it's a bitmask ;)
                 continue;
-        #endif                   
             if ( s == sock ) // request on master socket, accept and send main header.
             {
-                socklen_t addrlen = sizeof(SOCKADDR);
-                SOCKADDR_IN address = {0};     
-                SOCKET      client  = ::accept( sock,  (SOCKADDR*)&address, &addrlen );
-                if ( client == SOCKET_ERROR )
+                socklen_t addrlen = sizeof(struct sockaddr *);
+                struct sockaddr_in address = {0};
+                int      client  = ::accept( sock,  (struct sockaddr *)&address, &addrlen );
+                if ( client == -1 )
                 {
                     cerr << "error : couldn't accept connection on sock " << sock<< " !" << endl;
                     return false;
                 }
-                maxfd=(maxfd>client?maxfd:client);
+                maxfd=( client > maxfd ? client : maxfd);
                 FD_SET( client, &master );
                 _write( client,"HTTP/1.0 200 OK\r\n",0);
                 _write( client,
@@ -157,14 +141,14 @@ public:
                     "Content-Type: multipart/x-mixed-replace; boundary=mjpegstream\r\n"
                     "\r\n",0);
                 cerr << "new client " << client << endl;
-            } 
+            }
             else // existing client, just stream pix
             {
                 char head[400];
                 sprintf(head,"--mjpegstream\r\nContent-Type: image/jpeg\r\nContent-Length: %lu\r\n\r\n",outlen);
                 _write(s,head,0);
                 int n = _write(s,(char*)(&outbuf[0]),outlen);
-                //cerr << "known client " << s << " " << n << endl;
+                cerr << "known client " << s << " " << n << endl;
                 if ( n < outlen )
                 {
                     cerr << "kill client " << s << endl;
@@ -175,4 +159,4 @@ public:
         }
         return true;
     }
-};
+}
