@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
       }
     }
 
-    Mat drawing = original.clone();
+    Mat drawing = tmp.clone();
     for( int i = 0; i< filteredContours.size(); i++ )
     {
       Scalar color = Scalar(128,128,128);
