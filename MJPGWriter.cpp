@@ -74,7 +74,7 @@ public:
 
         struct sockaddr_in address;
         address.sin_addr.s_addr = INADDR_ANY;
-        address.sin_family      = AF_INET;
+        address.sin_family      = AF_UNSPEC;
         address.sin_port        = ::htons(port);
         setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
         if ( ::bind( sock, (struct sockaddr *) &address, sizeof(struct sockaddr_in *) ) == -1 )
@@ -89,7 +89,6 @@ public:
         }
         FD_SET( sock, &master );
         maxfd = sock+1;
-        ::freeaddrinfo(address);
         return true;
     }
 
@@ -159,4 +158,4 @@ public:
         }
         return true;
     }
-}
+};

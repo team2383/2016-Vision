@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   device.startVideo();
   device.startDepth();
 
-  MJPGWriter camServer(8080);
+  MJPGWriter camServer(5092);
 
   while (true) {
     vector<vector<Point> > contours;
