@@ -38,8 +38,6 @@ int main(int argc, char **argv) {
 
     Mat temp_contours = tmp.clone();
 
-
-
     findContours(temp_contours, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     int i;
@@ -58,7 +56,7 @@ int main(int argc, char **argv) {
       }
     }
 
-    Mat drawing = Mat::zeros( original.size(), CV_8UC3 );
+    Mat drawing = original.clone();
     for( int i = 0; i< filteredContours.size(); i++ )
     {
       Scalar color = Scalar(128,128,128);
