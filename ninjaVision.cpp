@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
     Mat original = videoMat.clone();
     Mat tmp;
 
-    cvtColor(videoMat, tmp, CV_BGR2HLS);
+    cvtColor(videoMat, tmp, CV_RGB2HLS);
     inRange(tmp, Scalar(0,16,0), Scalar(255,255,255), tmp);
 
     Mat temp_contours = tmp.clone();
