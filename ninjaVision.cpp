@@ -20,8 +20,9 @@ int main(int argc, char **argv) {
   device.startVideo();
   device.startDepth();
 
-  MJPGWriter camServer(5092);
+  //MJPGWriter camServer(5092);
 
+  namedWindow("contours", CV_WINDOW_AUTOSIZE);
   while (true) {
     vector<vector<Point> > contours;
     vector<vector<Point> > filteredContours;
@@ -64,7 +65,8 @@ int main(int argc, char **argv) {
       drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
     }
 
-    camServer.write(drawing);
+    //camServer.write(drawing);
+    imshow("contours", drawing);
 
     cvWaitKey(5);
   }
