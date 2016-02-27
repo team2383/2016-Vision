@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "cvFreenect.hpp"
@@ -8,8 +9,18 @@
 using namespace cv;
 using namespace std;
 
+double normalize360(double angle) {
+    while(angle >= 360.0) {
+        angle -= 360.0;    
+    }
+    while(angle < 0.0) {
+        angle += 360.0;    
+    }
+    return angle;
+}
+
 int main(int argc, char **argv) {
-  Mat videoMat(Size(640,480),CV_8UC1,Scalar(0));
+  Mat videoMat(Size(640,480),CV_8UC3,Scalar(0));
 
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
@@ -19,6 +30,7 @@ int main(int argc, char **argv) {
 
   device.startVideo();
   device.startDepth();
+
 
   //MJPGWriter camServer(5092);
 
@@ -30,15 +42,13 @@ int main(int argc, char **argv) {
     vector<Rect> ir_rects;
     device.getVideo(videoMat);
 
-    Mat original = videoMat.clone();
-    Mat tmp;
+    Mat gray, ranged, processed;
+    cvtColor(videoMat, gray, CV_BGR2GRAY);
+    inRange(gray, Scalar(64), Scalar(255), processed);
 
-    cvtColor(videoMat, tmp, CV_RGB2HLS);
-    inRange(tmp, Scalar(0,16,0), Scalar(255,255,255), tmp);
+    Mat tmp = processed.clone();
 
-    Mat temp_contours = tmp.clone();
-
-    findContours(temp_contours, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    findContours(tmp, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     int i;
     for (i = 0; i < contours.size(); i++) {
@@ -50,17 +60,45 @@ int main(int argc, char **argv) {
       convexHull(contour, hull);
       double solidity = 100 * area / contourArea(hull);
 
-      if (area > 300.0 && solidity < 75.0) {
+      if (area > 400.0 && r.height > 25 && r.width > 25 && solidity < 75.0) {
         filteredContours.push_back(contour);
         ir_rects.push_back(r);
       }
     }
 
-    Mat drawing = tmp.clone();
-    for( int i = 0; i< filteredContours.size(); i++ )
-    {
-      Scalar color = Scalar(128,128,128);
-      drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
+    Mat drawing;
+    cvtColor(processed, drawing, CV_GRAY2BGR);
+
+
+    for (Rect r : ir_rects) {
+        double x, targetX, distance, azimuth;
+        x = r.br().x + r.width/2;
+        x = (x - processed.size().width/2) / (processed.size().width/2);
+        /* target to floor: 73
+         * camera lens height: 2.5
+         * camera angle from floor: 20 degrees
+         * horizontal FOV: 58.5 degrees
+         * vertical FOV:   46.6 degrees
+         */
+
+        distance = processed.size().height * 12.0 / (2 * r.height * tan(46.6 * M_PI / 360));
+        targetX = r.tl().x + r.width / 2;
+        targetX = 2 * (targetX / processed.size().width) - 1;
+        azimuth = normalize360(targetX*58.5 / 2.0);
+
+        rectangle(drawing, r.tl(), r.br(), Scalar(79,10,255), 2, 8, 0);
+
+        Point center = Point(r.br().x - r.width / 2 - 15, r.br().y - r.height / 2);
+        Point centert = Point(center.x, 10.0+center.y+r.height/2);
+        Point centerb = Point(center.x, 10.0+center.y-r.height/2);
+
+        char capTop[100];
+        char capBottom[100];
+        snprintf(capTop, sizeof(capTop), "x: %f azimuth: %f", x, azimuth);
+        snprintf(capBottom, sizeof(capBottom), "distance: %f", distance);
+
+        putText(drawing, capTop, centert, FONT_HERSHEY_PLAIN, 1, Scalar(255,10,79));
+        putText(drawing, capBottom, centerb, FONT_HERSHEY_PLAIN, 1, Scalar(255,10,79));
     }
 
     //camServer.write(drawing);
