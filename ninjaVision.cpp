@@ -4,7 +4,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "cvFreenect.hpp"
 #include "libfreenect.hpp"
-#include "MJPGWriter.cpp"
 #include "ntcore_cpp.h"
 
 using namespace cv;
