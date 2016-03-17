@@ -4,7 +4,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "cvFreenect.hpp"
 #include "libfreenect.hpp"
-#include "ntcore_cpp.h"
+#include "NetworkTable.h"
 
 using namespace cv;
 using namespace std;
@@ -30,8 +30,8 @@ int main(int argc, char **argv) {
 
   device.startVideo();
 
-  NetworkTable.SetClientMode();
-  NetworkTable.SetTeam(2383);
+  NetworkTable::SetClientMode();
+  NetworkTable::SetTeam(2383);
 
   NetworkTable* table = NetworkTable::GetTable("vision");
 
