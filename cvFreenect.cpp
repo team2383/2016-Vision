@@ -26,7 +26,7 @@ cvFreenectDevice::cvFreenectDevice(freenect_context *_ctx, int _index)
 bool cvFreenectDevice::getVideo(Mat& output) {
   lock_guard<mutex> lock(m_video_mutex);
   if(m_new_video_frame) {
-    cv::cvtColor(videoMat, output, CV_GRAY2RGB);
+    cv::cvtColor(videoMat, output, CV_GRAY2BGR);
     m_new_video_frame = false;
     return true;
   } else {

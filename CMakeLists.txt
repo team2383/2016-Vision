@@ -9,5 +9,5 @@ find_package(Freenect REQUIRED)
 find_package(libusb-1.0 REQUIRED)
 
 add_executable(2016-Vision ninjaVision.cpp cvFreenect.cpp)
-target_include_directories(2016-Vision PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${LIBUSB_1_INCLUDE_DIRS} ${FREENECT_INCLUDE_DIR} ${OpenCV2_INCLUDE_DIRS})
-target_link_libraries(2016-Vision LINK_PUBLIC ${OpenCV_LIBS} ${FREENECT_freenect_LIBRARY} ${CMAKE_THREAD_LIBS_INIT})
+target_include_directories(2016-Vision PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${LIBUSB_1_INCLUDE_DIRS} ${FREENECT_INCLUDE_DIR} ${OpenCV2_INCLUDE_DIRS} "${CMAKE_CURRENT_SOURCE_DIR}/ntcore/include")
+target_link_libraries(2016-Vision LINK_PUBLIC ${OpenCV_LIBS} ${FREENECT_freenect_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} "${CMAKE_CURRENT_SOURCE_DIR}/ntcore/libntcore.so")
