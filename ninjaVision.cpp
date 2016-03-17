@@ -4,6 +4,7 @@
 #include "cvFreenect.hpp"
 #include "libfreenect.hpp"
 #include "MJPGWriter.cpp"
+#include "ntcore_cpp.h"
 
 using namespace cv;
 using namespace std;
@@ -14,13 +15,15 @@ int main(int argc, char **argv) {
   Freenect::Freenect freenect;
   cvFreenectDevice& device = freenect.createDevice<cvFreenectDevice>(0);
 
-  device.  setVideoFormat(FREENECT_VIDEO_IR_8BIT,   FREENECT_RESOLUTION_MEDIUM);
+  device.setVideoFormat(FREENECT_VIDEO_IR_8BIT,   FREENECT_RESOLUTION_MEDIUM);
   device.setDepthFormat(FREENECT_DEPTH_11BIT, FREENECT_RESOLUTION_MEDIUM);
 
   device.startVideo();
-  device.startDepth();
 
-  //MJPGWriter camServer(5092);
+  NetworkTable.SetClientMode();
+  NetworkTable.SetTeam(2383);
+
+  NetworkTable* table = NetworkTable::GetTable("vision");
 
   namedWindow("contours", CV_WINDOW_AUTOSIZE);
   while (true) {
@@ -28,7 +31,8 @@ int main(int argc, char **argv) {
     vector<vector<Point> > filteredContours;
     vector<Vec4i> hierarchy;
     vector<Rect> ir_rects;
-    device.getVideo(videoMat);
+    //dont bother processing the mat if image is stale!
+    if(!device.getVideo(videoMat)) continue;
 
     Mat original = videoMat.clone();
     Mat tmp;
@@ -62,11 +66,6 @@ int main(int argc, char **argv) {
       Scalar color = Scalar(128,128,128);
       drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point() );
     }
-
-    //camServer.write(drawing);
-    imshow("contours", drawing);
-
-    cvWaitKey(5);
   }
   device.stopVideo();
   device.stopDepth();
