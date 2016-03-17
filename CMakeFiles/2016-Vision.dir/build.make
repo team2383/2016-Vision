@@ -130,6 +130,7 @@ CMakeFiles/2016-Vision.dir/cvFreenect.cpp.o.provides.build: CMakeFiles/2016-Visi
 2016-Vision: /usr/lib/libopencv_contrib.so.2.4.12
 2016-Vision: /usr/lib/libopencv_calib3d.so.2.4.12
 2016-Vision: /usr/local/lib/libfreenect.so
+2016-Vision: ntcore/libntcore.so
 2016-Vision: /usr/lib/libopencv_tegra.so.2.4.12
 2016-Vision: /usr/lib/libopencv_stitching.so.2.4.12
 2016-Vision: /usr/lib/libopencv_gpu.so.2.4.12

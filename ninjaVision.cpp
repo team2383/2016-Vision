@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
   shared_ptr<NetworkTable> table = NetworkTable::GetTable("vision");
 
-  namedWindow("contours", CV_WINDOW_AUTOSIZE);
+  //namedWindow("contours", CV_WINDOW_AUTOSIZE);
   while (true) {
     vector<vector<Point> > contours;
     vector<vector<Point> > filteredContours;
