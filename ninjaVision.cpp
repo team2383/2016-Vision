@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
   NetworkTable::SetClientMode();
   NetworkTable::SetTeam(2383);
 
-  NetworkTable* table = NetworkTable::GetTable("vision");
+  shared_ptr<NetworkTable> table = NetworkTable::GetTable("vision");
 
   namedWindow("contours", CV_WINDOW_AUTOSIZE);
   while (true) {
