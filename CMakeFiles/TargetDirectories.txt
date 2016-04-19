@@ -1,1 +1,0 @@
-/home/ubuntu/2383/2016-Vision/CMakeFiles/2016-Vision.dir

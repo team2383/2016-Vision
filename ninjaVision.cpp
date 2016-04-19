@@ -9,16 +9,6 @@
 using namespace cv;
 using namespace std;
 
-double normalize360(double angle) {
-    while(angle >= 360.0) {
-        angle -= 360.0;    
-    }
-    while(angle < 0.0) {
-        angle += 360.0;    
-    }
-    return angle;
-}
-
 int main(int argc, char **argv) {
   Mat videoMat(Size(640,480),CV_8UC3,Scalar(0));
 
@@ -45,11 +35,11 @@ int main(int argc, char **argv) {
     vector<double> azimuths;
     //dont bother processing the mat if image is stale!
     if(!device.getVideo(videoMat)) continue;
- 
+
     Mat gray, ranged, processed;
     cvtColor(videoMat, gray, CV_BGR2GRAY);
     //180-255 at SFL & ROC
-    inRange(gray, Scalar(120), Scalar(255), processed);
+    inRange(gray, Scalar(160), Scalar(255), processed);
 
     Mat tmp = processed.clone();
 
@@ -111,6 +101,7 @@ int main(int argc, char **argv) {
         putText(drawing, capBottom, centerb, FONT_HERSHEY_PLAIN, 1, Scalar(255,10,79));
     }
 
+    table->PutNumber("watchdog_result", rand());
     table->PutNumberArray("distances", distances);
     table->PutNumberArray("azimuths", azimuths);
 
