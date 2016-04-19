@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
         putText(drawing, capBottom, centerb, FONT_HERSHEY_PLAIN, 1, Scalar(255,10,79));
     }
 
-    table->PutNumber("watchdog_result", rand());
+    table->PutNumber("watchdog", rand());
     table->PutNumberArray("distances", distances);
     table->PutNumberArray("azimuths", azimuths);
 
